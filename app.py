@@ -4,10 +4,14 @@ from pyspark.ml.feature import Tokenizer,StopWordsRemover, CountVectorizer,IDF,S
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.linalg import Vector
 from pyspark.ml.classification import NaiveBayes
-from pyspark.ml.classification import NaiveBayes
 from pyspark.ml import Pipeline
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 from read import readData
+import numpy as np
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+
 
 spark = SparkSession.builder.appName('nlp').getOrCreate()
 
@@ -42,3 +46,23 @@ test_results.show()
 acc_eval = MulticlassClassificationEvaluator()
 acc = acc_eval.evaluate(test_results)
 print("Accuracy of model at predicting spam was: {}".format(acc))
+
+
+
+data_array =  np.array(test_results.select("prediction").collect())
+data_array1 =  np.array(test_results.select("label").collect())
+names = ['spam prediction','spam', 'ham prediction','ham']
+values = [np.count_nonzero(data_array == 1), np.count_nonzero(data_array1 == 1),np.count_nonzero(data_array == 0), np.count_nonzero(data_array1 == 0)]
+plt.figure(figsize=(18, 8))
+plt.subplot(131)
+plt.bar(names, values)
+plt.ylabel('total')
+plt.suptitle('Filtrage des emails')
+# plt.show()
+
+print(confusion_matrix(data_array,data_array1))
+cf_matrix=confusion_matrix(data_array,data_array1)
+
+sns.heatmap(cf_matrix/np.sum(cf_matrix), annot=True, fmt='.2%', cmap='Blues')
+
+print("done.")
