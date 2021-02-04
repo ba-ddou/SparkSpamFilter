@@ -30,8 +30,8 @@ def fillDb(data,db):
     for line in data:
         temp = line.rstrip().split('\t')
         record = {
-            "text": temp[1],
-            "class": temp[0] 
+            "class": temp[0],
+            "text": temp[1]
         }
         index+=1
         stdscr.addstr(0, 0,"inserted "+str(index) +" docuemnts...")

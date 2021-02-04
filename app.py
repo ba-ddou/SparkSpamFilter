@@ -7,11 +7,11 @@ from pyspark.ml.classification import NaiveBayes
 from pyspark.ml.classification import NaiveBayes
 from pyspark.ml import Pipeline
 from pyspark.ml.evaluation import MulticlassClassificationEvaluator
-
+from read import readData
 
 spark = SparkSession.builder.appName('nlp').getOrCreate()
-data = spark.read.csv("data/emailCollection",inferSchema=True,sep='\t')
-data = data.withColumnRenamed('_c0','class').withColumnRenamed('_c1','text')
+
+data = readData()
 data.show()
 
 data = data.withColumn('length',length(data['text']))
